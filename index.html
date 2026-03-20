@@ -1,25 +1,138 @@
-<html><head>
+<html>
+<head>
 <title>@despairingly</title>
 <link rel="icon" href="images/crown.gif" type="image/gif">
+<style>
+
+  *, html, body {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="white" stroke="black" stroke-width="1" d="M7 2l12 11.2-5.8.5 3.3 7.3-2.2 1-3.2-7.4L7 19z"/></svg>'), auto !important;
+  }
+
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    background-color: #0F0F0F; overflow: hidden;
+    font-family: "Verdana", sans-serif;
+  }
+
+  body::before {
+    content: " "; display: block; position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    z-index: 10; background-size: 100% 3px; pointer-events: none;
+  }
+
+  #overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #0F0F0F; display: flex; justify-content: center; align-items: center;
+    z-index: 9999; 
+    transition: opacity 1.5s ease;
+  }
+
+  #enter-text {
+    font-size: 11px; letter-spacing: 5px; color: #FFFFFF; 
+    text-transform: uppercase; animation: pulse 2.5s infinite ease-in-out;
+    transition: opacity 0.3s ease;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; }
+  }
+
+  #main-content {
+    opacity: 0; transition: opacity 2.5s ease;
+    display: flex; flex-direction: column; justify-content: space-between; 
+    height: 100vh; width: 100%; text-align: center;
+  }
+
+  .middle-section {
+    flex-grow: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+  }
+
+  .white-text { color: #FFFFFF; font-size: 10px; letter-spacing: 1px; }
+
+  .bottom-section { padding-bottom: 25px; font-size: 10px; color: #9F9F9F; position: relative; }
+
+  .view-counter {
+    position: absolute; bottom: 25px; right: 30px;
+    font-size: 10px; color: #555; display: flex; align-items: center; gap: 8px;
+  }
+  
+  #count { color: #888; font-variant-numeric: tabular-nums; }
+
+  #youtube-player { display: none; }
+</style>
 </head>
 
-<body bgcolor="#0F0F0F" text="#D7D7D7" link="#BBBBBB" vlink="#9F9F9F">
-<table width="99%" border="0" cellpadding="1" height="430" align="center">
-  <tbody><tr>
-    <td height="432"> 
-      <p> </p>
-      <div align="center">
-        <p><img src="images/splash.png" width="454" height="127" id="markbode"></p>
-        <p><font face="verdana" size="1">i'm not even all that</font></p>
-		<p> </p>
-      </div>
-    </td>
-  </tr>
-</tbody></table>
-<div align="center">
-  <p><font face="verdana" size="1">02.07.2026</font></p>
-  <p><font face="verdana" size="1">Copyright © <b>civilian</b> <i>All Rights Reserved</i><br></font></p>
+<body>
+
+<div id="overlay" onclick="enterSite()">
+  <div id="enter-text">[ Click To Enter ]</div>
 </div>
-<div style="padding-top: 25px" align="center">
+
+<div id="main-content">
+  <div id="youtube-player"></div>
+  <div></div> 
+  
+  <div class="middle-section">
+    <p><img src="images/splash.png" width="454" height="127" id="markbode" style="max-width: 90%; height: auto;"></p>
+    <p class="white-text">rotten to the core</p>
+  </div>
+
+  <div class="bottom-section">
+    <p>02.07.2026</p>
+    <p>Copyright © <b>civilian</b> <i>All Rights Reserved</i></p>
+    
+    <div class="view-counter">
+      <span>👁</span>
+      <span id="count">000000</span>
+    </div>
+  </div>
 </div>
-</body></html>
+
+<script>
+  async function getHits() {
+    const counterElement = document.getElementById('count');
+    const siteIdentifier = 'despairingly_site'; 
+    try {
+      const fastRes = await fetch(`https://api.counterapi.dev/v1/${siteIdentifier}/home/up`);
+      const data = await fastRes.json();
+      counterElement.innerText = data.count.toString().padStart(6, '0');
+    } catch (error) {
+      counterElement.innerText = "000001"; 
+    }
+  }
+  getHits();
+
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  var player;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('youtube-player', {
+      height: '0', width: '0', videoId: '6OaIWhD-jK4',
+      playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': '6OaIWhD-jK4', 'enablejsapi': 1 }
+    });
+  }
+
+  function enterSite() {
+    const overlay = document.getElementById('overlay');
+    const text = document.getElementById('enter-text');
+    const content = document.getElementById('main-content');
+
+    overlay.style.pointerEvents = 'none';
+    text.style.opacity = '0';
+
+    overlay.style.opacity = '0';
+    content.style.opacity = '1';
+
+    if (player && player.playVideo) { player.playVideo(); }
+
+    setTimeout(() => { overlay.style.display = 'none'; }, 150);
+  }
+</script>
+
+</body>
+</html>
